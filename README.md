@@ -113,6 +113,12 @@ The hosted desk persists its demo queue, gate ledger and audit trail to a
 in-memory session storage when unset — the header pill always says which
 backend is live.
 
+> **Deploying to Vercel?** In the Vercel project settings set **Root Directory
+> = `web`** (steps in [`web/README.md`](web/README.md)). Do **not** add a root
+> `vercel.json`: the Python package at the repo root is the agentic CLI/MCP
+> core, not a web service — a root-level `python` runtime has no web entrypoint
+> to serve, which fails the build with `must specify an "entrypoint"`.
+
 **One command** (creates a virtualenv, installs dependencies, generates the
 bundled synthetic intake cards, runs the evaluation suite, then runs the full
 agent over a 12-patient OPD queue):
