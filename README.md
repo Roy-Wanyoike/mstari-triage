@@ -106,6 +106,13 @@ built-vs-borrowed rationale): see [`ARCHITECTURE.md`](ARCHITECTURE.md).
 Prerequisites: **Python 3.10+** and git. *Optional:* [Ollama](https://ollama.com)
 for the open-weights LLM lane.
 
+**No terminal? The repo also ships a Vercel-ready web UI ([`web/`](web/README.md))
+and a 2:16 walkthrough video ([`video/mstari-demo.mp4`](video/mstari-demo.mp4)).**
+The hosted desk persists its demo queue, gate ledger and audit trail to a
+**Neon Postgres** database (via Vercel, `DATABASE_URL`) and falls back to
+in-memory session storage when unset — the header pill always says which
+backend is live.
+
 **One command** (creates a virtualenv, installs dependencies, generates the
 bundled synthetic intake cards, runs the evaluation suite, then runs the full
 agent over a 12-patient OPD queue):
@@ -162,6 +169,42 @@ open-weights model performs the full task of reading each free-text complaint
 and mapping it to SATS discriminator codes; the score itself is always
 deterministic cited code (`mstari/scale.py`). No endpoint configured →
 deterministic heuristic mode. Either way the repo runs end-to-end.
+
+### How it works — the whole flow in one pass
+
+1. **Ingestion** — a nurse records vitals + a free-text complaint on an intake
+   card; `parse_intake_record` loads and normalises it. Children ≤ 12 are
+   escalated to a clinician, never scored by the adult chart.
+2. **Extraction** — the complaint is mapped onto the SATS discriminator list by
+   an open-weights **Qwen** model (local via Ollama, or the challenge-provided
+   ModelScope endpoint below). No endpoint → a deterministic keyword fallback
+   runs and the backend is labelled on every card (honest mode).
+3. **Cited scoring** — `mstari/scale.py` computes TEWS and applies
+   discriminator overrides; every component cites the vital behind it. The
+   score is never the model's opinion.
+4. **Human gate** — the graph stops; `confirm_priority` refuses to publish
+   without a named clinician (block-by-default, enforced inside the MCP
+   server); approval records who / what / when in `gate_ledger.json`.
+5. **Queue board** — confirmed priorities only, RED → GREEN, TEWS descending,
+   longest-waiting first. Worsening re-check vitals raise a gated second-look
+   flag citing both vital sets — it never changes the priority.
+6. **Audit** — every tool call lands in `audit_log.jsonl` with inputs, outputs
+   and timestamps.
+
+### Qwen API configuration (challenge-provided ModelScope endpoint)
+
+Copy `.env.example` to `.env` (git-ignored; never commit real tokens) and set:
+
+```bash
+MSTARI_LLM_BASE_URL=https://api-inference.modelscope.ai/v1
+MSTARI_LLM_MODEL=Qwen-Ambassador/Qwen3.8-plus
+MSTARI_LLM_API_KEY=<your ModelScope token>
+```
+
+Available models: `Qwen-Ambassador/Qwen3.7-Max`, `Qwen-Ambassador/Qwen3.8-Max`,
+`Qwen-Ambassador/Qwen3.8-plus`, `Qwen-Ambassador/Qwen3.7-Plus`. The hosted UI
+reads the same config as `MODELSCOPE_*` variables — see
+[`web/.env.example`](web/.env.example).
 
 ## 7. Technology stack
 
@@ -323,7 +366,7 @@ python -m mstari.main evals
 | OSI licence | MIT (`LICENSE`) |
 | 8+ eval tasks incl. one unfixed failure | `EVALS.md` — 15 pass, F1 intentionally unfixed |
 | Architecture doc | `ARCHITECTURE.md` |
-| Demo video (unedited, tool calls on screen) | shot list in `VIDEO_SCRIPT.md` |
+| Demo video (unedited, tool calls on screen) | [`video/mstari-demo.mp4`](video/mstari-demo.mp4) — cut from a real run's audit log (2:16); shot list in `VIDEO_SCRIPT.md` |
 
 ### Repository layout
 
@@ -332,6 +375,9 @@ mstari/            the agent: mcp_server, mcp_client, graph (LangGraph),
                    scale (SATS TEWS), llm, guardrails, gates, queue, evals
 data/synthetic/    fabricated intake cards (no real patient data, ever)
 data/references/   verbatim SATS chart source extract + ATTRIBUTION.md
+docs/              architecture diagram (PNG + editable HTML source)
+video/             demo walkthrough MP4 (every step incl. ingestion) + notes
+web/               hosted demo mirror — Next.js UI, Vercel-ready, Neon storage
 runs/              per-run artifacts: queue boards, audit log, gate ledger
 tests/             deterministic unit tests for the scoring core
 run_demo.sh        the one command
