@@ -6,27 +6,9 @@
 
 **LangGraph pipeline with a clinician gate**, orchestrated over MCP tools:
 
-```
-            ┌──────────────────────────────────────────────────────────┐
-            │                      LangGraph (graph.py)                │
-            │                                                          │
-START ──▶ plan ──▶ intake ──▶ extract ──▶ score ──▶ human_gate ──┬─▶ publish ─▶ rank ─▶ summarize ─▶ END
-                    │           │          │            │          │
-                    ▼           ▼          ▼            ▼          ▼
-              MCP tool    open-weights  MCP tool    clinician  MCP tools
-              parse_      LLM node      score_      (named)    confirm_ / rank_
-              intake      (Qwen via     priority               priority,
-              record      Ollama;                                  (gated)
-                          keyword
-                          fallback)
-            └──────────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-                 runs/<run_id>/ : audit_log.jsonl (every tool call:
-                 inputs, outputs, timestamps) · gate_ledger.json ·
-                 queue_board.md · draft_cards/ · confirmed_cards/ ·
-                 recheck_flags/
-```
+![Mstari system architecture — data sources → LangGraph agent → models / MCP tools / human gate → run artifacts](docs/architecture.png)
+
+*(editable source: [`docs/architecture.html`](docs/architecture.html))*
 
 Why an agent and not a script: each node decides its next call from the
 previous node's output — the extract node maps whatever complaint text it

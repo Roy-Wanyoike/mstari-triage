@@ -92,27 +92,11 @@ honest, labelled lanes (local open-weights Qwen by default; deterministic
 heuristic fallback; optional frontier lane for synthetic data only). All
 artifacts land on disk per run, so every decision is replayable.
 
-```
-            ┌──────────────────────────────────────────────────────────┐
-            │                      LangGraph (graph.py)                │
-            │                                                          │
-START ──▶ plan ──▶ intake ──▶ extract ──▶ score ──▶ human_gate ──┬─▶ publish ─▶ rank ─▶ summarize ─▶ END
-                    │           │          │            │          │
-                    ▼           ▼          ▼            ▼          ▼
-              MCP tool    open-weights  MCP tool    clinician  MCP tools
-              parse_      LLM node      score_      (named)    confirm_ / rank_
-              intake      (Qwen via     priority               priority,
-              record      Ollama;                                  (gated)
-                          keyword
-                          fallback)
-            └──────────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-                 runs/<run_id>/ : audit_log.jsonl (every tool call:
-                 inputs, outputs, timestamps) · gate_ledger.json ·
-                 queue_board.md · draft_cards/ · confirmed_cards/ ·
-                 recheck_flags/
-```
+![Mstari system architecture — data sources → LangGraph agent → models / MCP tools / human gate → run artifacts](docs/architecture.png)
+
+*Diagram source: [`docs/architecture.html`](docs/architecture.html) (editable HTML, rendered to
+`docs/architecture.png`). It maps the agents, the LLM lanes, the MCP client/server and its six
+tools, the external APIs, the data sources, the human-in-the-loop gate, and the overall data flow.*
 
 Full one-page design (division of labour, why-agent-not-a-script, MCP
 built-vs-borrowed rationale): see [`ARCHITECTURE.md`](ARCHITECTURE.md).

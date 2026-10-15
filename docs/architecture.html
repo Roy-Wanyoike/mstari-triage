@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mstari — system architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --text: #111827;
+    --text-sub: #6B7280;
+    --text-muted: #9CA3AF;
+    --bg: #FFFFFF;
+    --border: #E5E7EB;
+    --connector: #94A3B8;
+    --amber: #F59E0B;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root { width: fit-content; min-width: 1400px; margin: 0 auto; padding: 48px 56px 40px; background: #FFFFFF; }
+
+  /* ---------- title ---------- */
+  .flow-title { font-size: 26px; font-weight: 700; text-align: center; color: #0F172A; }
+  .flow-subtitle { font-size: 14px; color: var(--text-sub); text-align: center; margin-top: 8px; margin-bottom: 28px; }
+
+  /* ---------- overall data-flow strip ---------- */
+  .strip-caption { font-size: 11px; font-weight: 600; letter-spacing: 1.4px; color: var(--text-muted); text-align: center; margin-bottom: 10px; }
+  .flow-strip { display: flex; justify-content: center; align-items: stretch; gap: 10px; margin-bottom: 30px; }
+  .strip-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px;
+    padding: 8px 14px; font-size: 12.5px; color: #334155; white-space: nowrap;
+  }
+  .strip-chip .n {
+    width: 18px; height: 18px; line-height: 18px; border-radius: 50%;
+    background: #E2E8F0; color: #475569; font-size: 10.5px; font-weight: 700; text-align: center; flex-shrink: 0;
+  }
+  .strip-chip.gate { background: #FFF7ED; border-color: #FDE1B9; color: #92400E; }
+  .strip-chip.gate .n { background: #FDE1B9; color: #92400E; }
+  .strip-arrow { align-self: center; color: var(--connector); font-size: 15px; }
+
+  /* ---------- bands ---------- */
+  .band { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 22px 20px; }
+  .band-title { font-size: 16px; font-weight: 700; padding: 9px 16px; border-radius: 8px; margin-bottom: 16px; }
+  .band-title .code { font-weight: 500; font-size: 12.5px; opacity: 0.85; }
+  .phase-1 .band-title { background: #F0F4F8; color: #334155; border-left: 4px solid #64748B; }
+  .phase-2 .band-title { background: #E8EDF2; color: #1E3A5F; border-left: 4px solid #5B7A99; }
+  .phase-3 .band-title { background: #E0E7EF; color: #1E3050; border-left: 4px solid #4A6B8A; }
+  .phase-4 .band-title { background: #D8E0EA; color: #172540; border-left: 4px solid #3A5C7A; }
+
+  /* ---------- nodes ---------- */
+  .node-row { display: flex; gap: 20px; justify-content: center; }
+  .node {
+    background: #EFF6FF; border: 2px solid #3B82F6; border-radius: 10px;
+    padding: 14px 18px; flex: 1 1 0; min-width: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .node .t { font-size: 14.5px; font-weight: 600; color: #1E40AF; line-height: 1.35; }
+  .node .d { font-size: 12px; color: var(--text-sub); margin-top: 5px; line-height: 1.5; }
+  .node.plain { background: #FFFFFF; border-color: #CBD5E1; }
+  .node.plain .t { color: #334155; }
+
+  .tag {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
+    padding: 2px 8px; border-radius: 999px; margin-bottom: 6px;
+    background: #DBEAFE; color: #1E3A5F;
+  }
+  .tag.ext { background: #F1F5F9; color: #64748B; border: 1px dashed #94A3B8; }
+  .tag.gate { background: #FDE1B9; color: #92400E; }
+
+  /* ---------- agent pipeline chips ---------- */
+  .pipe-row { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: nowrap; }
+  .pipe-chip {
+    background: #F1F5F9; border: 1.5px solid #CBD5E1; border-radius: 8px;
+    padding: 9px 13px; font-size: 13px; font-weight: 600; color: #334155; text-align: center;
+    white-space: nowrap; position: relative;
+  }
+  .pipe-chip .sub { display: block; font-size: 10px; font-weight: 600; color: #64748B; letter-spacing: 0.5px; margin-top: 2px; }
+  .pipe-chip.llm { background: #EFF6FF; border-color: #93C5FD; color: #1E40AF; }
+  .pipe-chip.gate { background: #FFF7ED; border-color: var(--amber); color: #92400E; }
+  .pipe-arrow { color: var(--connector); font-size: 14px; flex-shrink: 0; }
+  .band-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 12px; }
+
+  /* ---------- band 3: three columns + clinician connector ---------- */
+  .drive-grid { display: grid; grid-template-columns: 355px 505px 104px 292px; gap: 24px; justify-content: center; align-items: stretch; }
+  .col-card { background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .col-card .col-title { font-size: 13.5px; font-weight: 700; color: #1E3050; }
+  .col-card .col-title .code { font-weight: 500; font-size: 11.5px; color: var(--text-muted); }
+  .stack { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .mini {
+    border-radius: 8px; padding: 10px 13px; background: #F8FAFC; border: 1.5px solid #CBD5E1;
+  }
+  .mini .t { font-size: 13px; font-weight: 600; color: #334155; line-height: 1.35; }
+  .mini .d { font-size: 11.5px; color: var(--text-sub); margin-top: 4px; line-height: 1.5; }
+  .mini.hl { background: #EFF6FF; border: 2px solid #3B82F6; }
+  .mini.hl .t { color: #1E40AF; }
+  .mini.ext { background: #FFFFFF; border: 2px dashed #94A3B8; }
+  .mini.ext .t { color: #475569; }
+
+  .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tool-chip { border-radius: 7px; padding: 8px 10px; font-size: 12px; font-weight: 600; line-height: 1.35; }
+  .tool-chip .kind { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.7px; padding: 1px 6px; border-radius: 999px; margin-left: 5px; vertical-align: 1px; }
+  .tool-chip.read { background: #F8FAFC; border: 1.5px solid #CBD5E1; color: #475569; }
+  .tool-chip.read .kind { background: #E2E8F0; color: #64748B; }
+  .tool-chip.acting { background: #EFF6FF; border: 1.5px solid #3B82F6; color: #1E40AF; }
+  .tool-chip.acting .kind { background: #DBEAFE; color: #1E3A5F; }
+  .tool-chip.gated { background: #FFF7ED; border: 2px solid var(--amber); color: #92400E; }
+  .tool-chip.gated .kind { background: #FDE1B9; color: #92400E; }
+  .tool-sub { font-size: 10.5px; font-weight: 400; color: var(--text-sub); display: block; margin-top: 3px; line-height: 1.4; }
+
+  .clin-card { background: #FFF7ED; border: 2px solid var(--amber); border-radius: 10px; padding: 14px 16px; }
+  .clin-card .t { font-size: 14.5px; font-weight: 700; color: #92400E; line-height: 1.35; }
+  .clin-card .d { font-size: 12px; color: #78350F; margin-top: 6px; line-height: 1.55; }
+  .clin-card .note { font-size: 11px; color: #92400E; background: #FDE1B9; border-radius: 6px; padding: 6px 9px; margin-top: 9px; line-height: 1.45; }
+
+  .approve-conn { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .approve-label { font-size: 11.5px; font-weight: 600; color: #92400E; text-align: center; margin-bottom: 6px; line-height: 1.3; }
+  .approve-arrow { position: relative; width: 100%; border-top: 2.5px solid var(--amber); }
+  .approve-arrow::before {
+    content: ''; position: absolute; left: -2px; top: -6.5px;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-right: 9px solid var(--amber);
+  }
+
+  /* ---------- connector rows between bands ---------- */
+  .conn-row { display: grid; grid-template-columns: 355px 505px 104px 292px; gap: 24px; justify-content: center; margin: 10px 0; }
+  .conn-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .conn-label { font-size: 12px; color: var(--text-sub); text-align: center; line-height: 1.4; }
+  .conn-arrow { font-size: 19px; color: var(--connector); line-height: 1; }
+  .conn-center { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 10px 0; }
+
+  /* ---------- artifacts ---------- */
+  .artifact-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .artifact {
+    background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 8px;
+    padding: 9px 14px; text-align: center;
+  }
+  .artifact .t { font-size: 12.5px; font-weight: 700; color: #172540; font-family: 'SF Mono', 'Consolas', monospace; }
+  .artifact .d { font-size: 11px; color: var(--text-sub); margin-top: 3px; }
+
+  /* ---------- legend + footer ---------- */
+  .flow-legend {
+    display: flex; gap: 26px; justify-content: center; margin-top: 26px;
+    padding: 13px 24px; background: #F9FAFB; border-radius: 8px; border: 1px solid #E5E7EB;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #4B5563; }
+  .legend-dot { width: 13px; height: 13px; border-radius: 3px; border: 2px solid; flex-shrink: 0; }
+  .footer-note { font-size: 11.5px; color: var(--text-muted); text-align: center; margin-top: 16px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div id="root">
+
+  <div class="flow-title">Mstari — the Triage Desk · System Architecture</div>
+  <div class="flow-subtitle">The agent proposes, the scale scores, the clinician decides — Mstari never diagnoses, never prescribes, never decides who gets seen.</div>
+
+  <div class="strip-caption">OVERALL DATA FLOW</div>
+  <div class="flow-strip">
+    <div class="strip-chip"><span class="n">1</span>Intake card</div>
+    <div class="strip-arrow">→</div>
+    <div class="strip-chip"><span class="n">2</span>Complaint → SATS codes (Qwen)</div>
+    <div class="strip-arrow">→</div>
+    <div class="strip-chip"><span class="n">3</span>Cited TEWS score (draft)</div>
+    <div class="strip-arrow">→</div>
+    <div class="strip-chip gate"><span class="n">4</span>Clinician gate</div>
+    <div class="strip-arrow">→</div>
+    <div class="strip-chip"><span class="n">5</span>Live queue (confirmed)</div>
+    <div class="strip-arrow">→</div>
+    <div class="strip-chip"><span class="n">6</span>Board + audit trail</div>
+  </div>
+
+  <!-- BAND 1 : DATA SOURCES -->
+  <div class="band phase-1">
+    <div class="band-title">Data sources — synthetic, cited, no PHI <span class="code">· the only inputs</span></div>
+    <div class="node-row">
+      <div class="node">
+        <div class="t">Synthetic intake cards</div>
+        <div class="d">12 patients + 1 re-check · <code>data/synthetic/</code> · every card carries <code>"synthetic": true</code> · vitals + free-text presenting complaint · no PHI exists anywhere</div>
+      </div>
+      <div class="node plain">
+        <div class="t">SATS adult chart — cited source extract</div>
+        <div class="d"><code>data/references/</code> · TEWS bands + discriminator list, verbatim from the published chart · interpretation notes in <code>data/ATTRIBUTION.md</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn-center">
+    <div class="conn-label">intake card (JSON) — one per patient, from the OPD desk (registration → vitals card)</div>
+    <div class="conn-arrow">↓</div>
+  </div>
+
+  <!-- BAND 2 : AGENT -->
+  <div class="band phase-2">
+    <div class="band-title">Agent — LangGraph orchestration <span class="code">· mstari/graph.py</span></div>
+    <div class="pipe-row">
+      <div class="pipe-chip">plan</div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip">intake</div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip llm">extract<span class="sub">LLM NODE</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip">score</div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip gate">human_gate<span class="sub">STOPS HERE</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip">publish</div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip">rank</div><div class="pipe-arrow">→</div>
+      <div class="pipe-chip">summarize</div>
+    </div>
+    <div class="band-note">each node decides its next call from the previous node's output · failures degrade per node · the graph stops dead at the gate when no named clinician approves</div>
+  </div>
+
+  <div class="conn-row">
+    <div class="conn-cell">
+      <div class="conn-label">complaint text ↓ · discriminator codes ↑</div>
+      <div class="conn-arrow">↓</div>
+    </div>
+    <div class="conn-cell">
+      <div class="conn-label">MCP tool calls — JSON-RPC over stdio</div>
+      <div class="conn-arrow">↓</div>
+    </div>
+    <div class="conn-cell"></div>
+    <div class="conn-cell"></div>
+  </div>
+
+  <!-- BAND 3 : MODELS + MCP + HUMAN GATE -->
+  <div class="band phase-3">
+    <div class="band-title">What the agent drives — models · MCP tools · the human gate</div>
+    <div class="drive-grid">
+
+      <!-- Col A : LLM lanes -->
+      <div class="col-card">
+        <div class="col-title">LLM lanes <span class="code">· mstari/llm.py</span></div>
+        <div class="stack">
+          <div class="mini hl">
+            <span class="tag">DEFAULT · OPEN WEIGHTS</span>
+            <div class="t">Qwen 2.5 7B — via Ollama, local</div>
+            <div class="d">one full task: free-text complaint → SATS discriminator codes · patient data never leaves the machine</div>
+          </div>
+          <div class="mini">
+            <span class="tag" style="background:#E2E8F0;color:#475569;">FALLBACK</span>
+            <div class="t">Deterministic keyword extractor</div>
+            <div class="d">no-LLM mode · honestly labelled in every card · known gap: no negation scope (eval F1)</div>
+          </div>
+          <div class="mini ext">
+            <span class="tag ext">EXTERNAL API · OPTIONAL</span>
+            <div class="t">ModelScope frontier lane</div>
+            <div class="d">api-inference.modelscope.ai · synthetic-data-only by policy · never sees real patient text</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col B : MCP layer -->
+      <div class="col-card">
+        <div class="col-title">MCP tool layer <span class="code">· built by us</span></div>
+        <div class="stack">
+          <div class="mini">
+            <div class="t">MCP client — <code>mstari/mcp_client.py</code></div>
+            <div class="d">stdio JSON-RPC · background loop so sync LangGraph nodes call real MCP tools</div>
+          </div>
+          <div class="mini" style="border-color:#93C5FD; background:#F8FAFC;">
+            <div class="t">MCP server (ours) — <code>mstari/mcp_server.py</code> · FastMCP</div>
+            <div class="d">gate semantics live in the server, not in a prompt · 6 tools, 4 act on the world</div>
+            <div class="tools-grid" style="margin-top:9px;">
+              <div class="tool-chip read">parse_intake_record<span class="kind">READ</span></div>
+              <div class="tool-chip read">list_discriminators<span class="kind">READ</span></div>
+              <div class="tool-chip acting">score_priority<span class="kind">ACTING</span><span class="tool-sub">writes draft card</span></div>
+              <div class="tool-chip acting">rank_queue<span class="kind">ACTING</span><span class="tool-sub">writes queue board</span></div>
+              <div class="tool-chip gated">confirm_priority<span class="kind">GATED</span><span class="tool-sub">publishes to live queue</span></div>
+              <div class="tool-chip gated">raise_recheck_flag<span class="kind">GATED</span><span class="tool-sub">deterioration second look</span></div>
+            </div>
+          </div>
+          <div class="mini ext">
+            <span class="tag ext">EXTERNAL · BORROWED SERVER</span>
+            <div class="t">mcp-server-fetch (official) → the web</div>
+            <div class="d">one tool: <code>fetch</code> — pulls live SATS / Kenya Triage Scale reference pages at plan time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- connector cell -->
+      <div class="approve-conn">
+        <div class="approve-label">approves<br>or blocks</div>
+        <div class="approve-arrow"></div>
+      </div>
+
+      <!-- Col C : Human gate -->
+      <div class="clin-card">
+        <span class="tag gate">HUMAN-IN-THE-LOOP · BLOCK BY DEFAULT</span>
+        <div class="t">Named clinician</div>
+        <div class="d">must approve every irreversible call — <code>confirm_priority</code> and <code>raise_recheck_flag</code> refuse to act without a named approver.</div>
+        <div class="d"><b>who + what + when</b> recorded in <code>gate_ledger.json</code>; a re-check flag is a second look, never a verdict.</div>
+        <div class="note">the server blocks ungated calls — the gate is code, not prose</div>
+        <div class="note">children ≤12 escalate to a clinician — the adult chart never scores them</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="conn-center">
+    <div class="conn-label">writes per-run artifacts — inputs, outputs and decisions land on disk</div>
+    <div class="conn-arrow">↓</div>
+  </div>
+
+  <!-- BAND 4 : ARTIFACTS -->
+  <div class="band phase-4">
+    <div class="band-title">Run artifacts — every decision replayable <span class="code">· runs/&lt;run_id&gt;/</span></div>
+    <div class="artifact-row">
+      <div class="artifact"><div class="t">queue_board.md</div><div class="d">cited queue, RED→GREEN</div></div>
+      <div class="artifact"><div class="t">audit_log.jsonl</div><div class="d">every tool call · in/out · timestamps</div></div>
+      <div class="artifact"><div class="t">gate_ledger.json</div><div class="d">approver · action · timestamp</div></div>
+      <div class="artifact"><div class="t">draft_cards/</div><div class="d">pre-approval state</div></div>
+      <div class="artifact"><div class="t">confirmed_cards/</div><div class="d">post-gate state</div></div>
+      <div class="artifact"><div class="t">recheck_flags/</div><div class="d">deterioration second looks</div></div>
+    </div>
+  </div>
+
+  <div class="flow-legend">
+    <div class="legend-item"><div class="legend-dot" style="border-color:#3B82F6;background:#EFF6FF;"></div>built by us — Mstari repo</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#94A3B8;background:#FFFFFF;border-style:dashed;"></div>external API / borrowed server</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#F59E0B;background:#FFF7ED;"></div>human gate / gated acting tool</div>
+    <div class="legend-item"><div class="legend-dot" style="border-color:#CBD5E1;background:#F8FAFC;"></div>supporting component</div>
+  </div>
+
+  <div class="footer-note">
+    Unsourced inputs refuse to score · unknown discriminator codes are rejected · the score is deterministic cited code — never the model's opinion<br>
+    Mstari · Agentic AI for Africa Innovation Challenge, healthcare track · diagram source: <code>docs/architecture.html</code>
+  </div>
+
+</div>
+</body>
+</html>
