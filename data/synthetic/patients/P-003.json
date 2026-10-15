@@ -1,0 +1,26 @@
+{
+  "patient_ref": "P-003",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T09:57:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 61,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 16,
+    "heart_rate": 105,
+    "sbp": 145,
+    "temp_c": 36.2,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Central chest pain, severe, started an hour ago while shopping and is not easing.",
+  "discriminators_reported": [
+    "chest_pain",
+    "pain_severe"
+  ],
+  "wait_minutes_at_triage": 25,
+  "_scenario_note": "mirrors the worked 'Mrs Mpendu' case on the source chart: TEWS low, ORANGE via discriminators"
+}

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mstari": {
+      "command": "python3",
+      "args": ["-m", "mstari.mcp_server"],
+      "cwd": ".",
+      "env": { "MSTARI_RUN_ID": "adhoc" },
+      "_note": "Our own server. Five tools: parse_intake_record (read), score_priority (writes draft triage cards), rank_queue (writes the queue board), confirm_priority (GATED: publishes a priority to the live queue - named clinician required), raise_recheck_flag (GATED: deterioration second-look flag - named clinician required)."
+    },
+    "fetch": {
+      "command": "python3",
+      "args": ["-m", "mcp_server_fetch"],
+      "_justification": "Borrowed, not ours: the official reference fetch server pulls the live SATS/Kenya Triage Scale reference pages and any facility-directory updates at plan time - writing and maintaining our own web crawler would be fragile duplicated work for zero clinical value."
+    }
+  }
+}

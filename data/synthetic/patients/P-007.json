@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-007",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:39:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 55,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 18,
+    "heart_rate": 80,
+    "sbp": 136,
+    "temp_c": 36.7,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Small cut on the hand while chopping wood. Bleeding stopped with a clean cloth. Mild pain.",
+  "discriminators_reported": [
+    "pain_mild"
+  ],
+  "wait_minutes_at_triage": 20,
+  "_scenario_note": "benign wound; GREEN expected"
+}

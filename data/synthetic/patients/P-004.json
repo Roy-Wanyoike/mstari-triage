@@ -1,0 +1,23 @@
+{
+  "patient_ref": "P-004",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T11:50:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 8,
+  "sex": "F",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 24,
+    "heart_rate": 120,
+    "sbp": 98,
+    "temp_c": 38.5,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Fever and cough. Child brought by mother, walking.",
+  "discriminators_reported": [],
+  "wait_minutes_at_triage": 15,
+  "_scenario_note": "age 8: OUTSIDE the adult chart (>12y); must escalate to clinician, never score"
+}

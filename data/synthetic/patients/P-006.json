@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-006",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T11:15:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 40,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 17,
+    "heart_rate": 74,
+    "sbp": 124,
+    "temp_c": 36.6,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Headache since morning, mild. Denies chest pain. Denies fever.",
+  "discriminators_reported": [
+    "pain_mild"
+  ],
+  "wait_minutes_at_triage": 12,
+  "_scenario_note": "KNOWN-FAILING extraction case (negation): see EVALS.md task F1"
+}

@@ -1,0 +1,99 @@
+[
+  {
+    "task": "T01 own MCP server lists >= 6 tools",
+    "expected": "parse_intake_record, score_priority, confirm_priority, rank_queue, raise_recheck_flag, list_discriminators",
+    "observed": "parse_intake_record, score_priority, confirm_priority, rank_queue, raise_recheck_flag, list_discriminators",
+    "pass": true
+  },
+  {
+    "task": "T02 parse synthetic intake card P-001",
+    "expected": "OK; structured vitals + complaint",
+    "observed": "status=OK, rr=18, complaint='Cough and fever for three days. Walked...'",
+    "pass": true
+  },
+  {
+    "task": "T03 unknown patient degrades gracefully",
+    "expected": "NOT_FOUND with hint, no exception",
+    "observed": "status=NOT_FOUND, hint present=True",
+    "pass": true
+  },
+  {
+    "task": "T04 P-001 scores YELLOW with cited components",
+    "expected": "DRAFT_WRITTEN YELLOW (TEWS 0 + pain_moderate), >=5 vital citations",
+    "observed": "status=DRAFT_WRITTEN, colour=YELLOW, tews=0, citations(vitals)=7",
+    "pass": true
+  },
+  {
+    "task": "T05 P-002 deranged vitals -> RED immediate",
+    "expected": "RED, TEWS 9, target immediate",
+    "observed": "colour=RED, tews=9, target=immediate",
+    "pass": true
+  },
+  {
+    "task": "T06 P-003 chart worked-case path: low TEWS, ORANGE via discriminator",
+    "expected": "ORANGE via chest_pain override (mirrors the source chart's own case study)",
+    "observed": "colour=ORANGE, tews=1, override='discriminator override: chest_pain (Chest pains), pain_severe (Pain: severe)'",
+    "pass": true
+  },
+  {
+    "task": "T07 child under 12 is escalated, never scored by the adult chart",
+    "expected": "OUT_OF_SCOPE_ADULT_CHART; nothing written",
+    "observed": "status=OUT_OF_SCOPE_ADULT_CHART, escalate_to=triage nurse / clinician, no_draft_written=True",
+    "pass": true
+  },
+  {
+    "task": "T08 gate blocks confirmation without a named clinician",
+    "expected": "BLOCKED",
+    "observed": "status=BLOCKED",
+    "pass": true
+  },
+  {
+    "task": "T09 named clinician confirmation is recorded in the gate ledger",
+    "expected": "CONFIRMED; ledger entry with name + timestamp",
+    "observed": "status=CONFIRMED, clinician=Sr. A. Wanjiru (Triage Nurse, evals), ledger_has_entry=True",
+    "pass": true
+  },
+  {
+    "task": "T10 queue board order: colour rank, TEWS desc, wait tie-break",
+    "expected": "RED(TEWS 9) > RED(wait 10) > RED(wait 8) > ORANGE(wait 30) > ORANGE(wait 25) > YELLOW(wait 45) > YELLOW(wait 40)",
+    "observed": "order=['P-002', 'P-010', 'P-008', 'P-005', 'P-003', 'P-012', 'P-001']",
+    "pass": true
+  },
+  {
+    "task": "T11 re-check flag is gated too (deterioration watch)",
+    "expected": "BLOCKED without clinician",
+    "observed": "status=BLOCKED",
+    "pass": true
+  },
+  {
+    "task": "T12 re-check cites both vital sets and never changes the priority",
+    "expected": "FLAG_RAISED with delta +3 (0->3); second look requested, verdict unchanged",
+    "observed": "status=FLAG_RAISED, tews 0->3, delta=3",
+    "pass": true
+  },
+  {
+    "task": "T13 diagnosis guardrail redacts LLM-style narrative",
+    "expected": "2 terms redacted, none remain",
+    "observed": "redacted 2 term(s); clean='Working impression: possible [redacted: diagnosis-like term ...'",
+    "pass": true
+  },
+  {
+    "task": "T14 prescription-like phrasing is hard-blocked",
+    "expected": "guardrail raises",
+    "observed": "prescription phrasing blocked",
+    "pass": true
+  },
+  {
+    "task": "T15 borrowed MCP server (official mcp-server-fetch, not our code) is callable",
+    "expected": "fetch tool available from the official server",
+    "observed": "tools=['fetch']",
+    "pass": true
+  },
+  {
+    "task": "F1 KNOWN UNFIXED: negation handling - 'denies chest pain' still matches the chest-pain keyword, over-triaging P-006 to ORANGE (safe direction, wrong level). Next attempt: negation-scope pass in the extractor + a second LLM adjudicator vote. Left unfixed on purpose - see EVALS.md.",
+    "expected": "GREEN (no discriminators apply)",
+    "observed": "colour=ORANGE",
+    "pass": false,
+    "known_failure": true
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-012",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T11:43:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 50,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 18,
+    "heart_rate": 80,
+    "sbp": 120,
+    "temp_c": 36.7,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Back pain for a week, moderate. Here for review.",
+  "discriminators_reported": [
+    "pain_moderate"
+  ],
+  "wait_minutes_at_triage": 45,
+  "_scenario_note": "deterioration-watch case: recheck vitals supplied separately (P-012-recheck)"
+}

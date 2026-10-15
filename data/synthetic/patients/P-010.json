@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-010",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:28:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 22,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 18,
+    "heart_rate": 92,
+    "sbp": 122,
+    "temp_c": 36.8,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Took an unknown number of pills after a disagreement this evening. Friend brought him.",
+  "discriminators_reported": [
+    "poisoning_overdose"
+  ],
+  "wait_minutes_at_triage": 10,
+  "_scenario_note": "RED discriminator: poisoning/overdose"
+}

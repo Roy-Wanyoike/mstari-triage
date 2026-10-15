@@ -1,0 +1,15 @@
+{
+  "patient_ref": "P-012",
+  "synthetic": true,
+  "observed_change": "Re-check by nurse while waiting in queue.",
+  "vitals_after": {
+    "resp_rate": 26,
+    "heart_rate": 108,
+    "sbp": 100,
+    "temp_c": 38.2,
+    "avpu": "alert",
+    "mobility": "walking",
+    "trauma": false
+  },
+  "wait_minutes_since_triage": 55
+}

@@ -1,0 +1,23 @@
+{
+  "patient_ref": "P-009",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T10:52:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 70,
+  "sex": "F",
+  "mobility": "with_help",
+  "vitals": {
+    "resp_rate": 19,
+    "heart_rate": 88,
+    "sbp": 156,
+    "temp_c": 36.5,
+    "avpu": "confused",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Brought by daughter. Confused since yesterday, not her usual self.",
+  "discriminators_reported": [],
+  "wait_minutes_at_triage": 35,
+  "_scenario_note": "confusion + mobility: TEWS 3 -> YELLOW"
+}

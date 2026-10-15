@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-005",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T11:48:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 28,
+  "sex": "F",
+  "mobility": "with_help",
+  "vitals": {
+    "resp_rate": 20,
+    "heart_rate": 92,
+    "sbp": 104,
+    "temp_c": 37.1,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "28 weeks pregnant, abdominal pain since yesterday after a fall at home.",
+  "discriminators_reported": [
+    "pregnancy_trauma_or_pain"
+  ],
+  "wait_minutes_at_triage": 30,
+  "_scenario_note": "pregnancy + trauma discriminator, ORANGE"
+}

@@ -1,0 +1,23 @@
+{
+  "patient_ref": "P-011",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:52:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 39,
+  "sex": "F",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 24,
+    "heart_rate": 110,
+    "sbp": 118,
+    "temp_c": 39.5,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Fever, feels hot, shivering since two days ago. Walking and talking normally.",
+  "discriminators_reported": [],
+  "wait_minutes_at_triage": 18,
+  "_scenario_note": "deranged vitals only: temp 2 + RR 1 + HR 1 -> TEWS 4 YELLOW"
+}

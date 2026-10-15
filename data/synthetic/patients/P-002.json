@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-002",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:56:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 47,
+  "sex": "M",
+  "mobility": "stretcher_or_immobile",
+  "vitals": {
+    "resp_rate": 28,
+    "heart_rate": 112,
+    "sbp": 86,
+    "temp_c": 38.9,
+    "avpu": "reacts_voice",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Brought in on a stretcher. Acute shortness of breath that started this morning, getting worse.",
+  "discriminators_reported": [
+    "sob_acute"
+  ],
+  "wait_minutes_at_triage": 5,
+  "_scenario_note": "TEWS 7 + RED discriminator -> immediate"
+}

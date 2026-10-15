@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-001",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:20:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 34,
+  "sex": "F",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 18,
+    "heart_rate": 78,
+    "sbp": 118,
+    "temp_c": 36.8,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Cough and fever for three days. Walked in unaided. Says the body pain is moderate.",
+  "discriminators_reported": [
+    "pain_moderate"
+  ],
+  "wait_minutes_at_triage": 40,
+  "_scenario_note": "routine febrile presentation; exercise YELLOW discriminator"
+}

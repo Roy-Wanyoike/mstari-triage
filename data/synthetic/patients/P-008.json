@@ -1,0 +1,25 @@
+{
+  "patient_ref": "P-008",
+  "synthetic": true,
+  "facility": "Kitui County Referral Hospital - OPD triage desk (demo)",
+  "arrived_at": "2026-10-15T08:07:00+03:00",
+  "recorded_by": "Enrolled Nurse Auxiliary (synthetic demo roster)",
+  "age_years": 30,
+  "sex": "M",
+  "mobility": "walking",
+  "vitals": {
+    "resp_rate": 20,
+    "heart_rate": 96,
+    "sbp": 118,
+    "temp_c": 36.9,
+    "avpu": "alert",
+    "trauma": false,
+    "spo2_percent": null
+  },
+  "complaint_text": "Deep cut on the leg from a panga. Bleeding heavily and will not stop despite pressure.",
+  "discriminators_reported": [
+    "haemorrhage_uncontrolled"
+  ],
+  "wait_minutes_at_triage": 8,
+  "_scenario_note": "RED discriminator: uncontrolled haemorrhage"
+}
