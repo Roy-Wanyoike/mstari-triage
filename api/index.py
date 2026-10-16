@@ -222,7 +222,14 @@ async def app(scope, receive, send):
     try:
         query = parse_qs(scope.get("query_string", b"").decode("utf-8"))
         body = await _read_body(receive)
-        status, content_type, payload = _route(scope["method"], scope["path"].rstrip("/") or "/", query, body)
+        path = scope["path"].rstrip("/") or "/"
+        # Prefix tolerance: when the services rewrite routes /core/* here, the
+        # platform may hand us the original path or the stripped one. Accept both.
+        if path == "/core":
+            path = "/"
+        elif path.startswith("/core/"):
+            path = path[len("/core"):]
+        status, content_type, payload = _route(scope["method"], path, query, body)
     except Exception as exc:  # honest failure, never a silent one
         status, content_type = 500, "application/json; charset=utf-8"
         payload = json.dumps({

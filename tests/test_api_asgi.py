@@ -113,6 +113,19 @@ def test_unknown_route_404():
     assert res["status"] == 404
 
 
+def test_core_prefix_routed_paths():
+    # services rewrite may hand us /core/api/health (original path) — accept it
+    res = _call("GET", "/core/api/health")
+    assert res["status"] == 200
+    assert _json_of(res)["service"] == "mstari-core"
+
+
+def test_core_prefix_root():
+    res = _call("GET", "/core")
+    assert res["status"] == 200
+    assert "Mstari" in res["body"].decode("utf-8")
+
+
 def test_post_triage_body():
     res = _call("POST", "/api/triage", body=json.dumps({"patient_ref": "P-002"}).encode())
     payload = _json_of(res)
