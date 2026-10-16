@@ -44,7 +44,13 @@ npm run dev                     # http://localhost:3000
 
 ## Deploy to Vercel
 
-**Dashboard (recommended):**
+**Two-services deploy (what the repo's root `vercel.json` now does):** import the
+repo with the project Framework Preset = **services** — it deploys this desk
+*and* the read-only core API (`/core`, `api/index.py`) together. See the root
+README §5. The Root Directory route below remains the alternative for deploying
+this desk alone.
+
+**Dashboard (alternative):**
 
 1. Push this repo to GitHub (it lives in `web/`).
 2. Vercel → **Add New Project** → import the repo.

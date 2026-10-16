@@ -89,61 +89,138 @@ _PAGE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mstari core service - the Triage Desk</title>
+<title>Mstari core service — the Triage Desk</title>
 <style>
-  :root {{ --ink:#0f172a; --teal:#0f766e; --amber:#b45309; --line:#e2e8f0; }}
+  :root {{
+    --ink:#0f172a; --teal:#0f766e; --teal-ink:#115e59; --amber:#b45309;
+    --line:#e2e8f0; --soft:#64748b; --chip:#eef2f7;
+  }}
   * {{ box-sizing:border-box; }}
-  body {{ margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-         color:var(--ink); background:#f8fafc; }}
-  main {{ max-width:820px; margin:0 auto; padding:48px 24px 64px; }}
-  h1 {{ font-size:1.6rem; margin:0 0 4px; }}
-  h1 span {{ color:var(--teal); }}
-  p.sub {{ margin:0 0 28px; color:#475569; }}
-  .banner {{ border-left:4px solid var(--amber); background:#fffbeb; padding:12px 16px;
-             border-radius:6px; font-size:.95rem; margin-bottom:28px; }}
-  h2 {{ font-size:1.05rem; margin:28px 0 10px; }}
-  table {{ width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line);
-           border-radius:8px; overflow:hidden; }}
-  td, th {{ text-align:left; padding:10px 14px; border-top:1px solid var(--line); font-size:.93rem; }}
-  th {{ background:#f1f5f9; font-weight:600; }}
-  code {{ background:#eef2f7; padding:2px 6px; border-radius:4px; font-size:.88em; }}
-  a {{ color:var(--teal); }}
-  footer {{ margin-top:32px; color:#64748b; font-size:.85rem; }}
+  body {{
+    margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink); background:#f7fafa;
+    background-image:radial-gradient(1200px 500px at 50% -10%, #dceef0, transparent);
+    background-repeat:no-repeat;
+  }}
+  .ribbon {{ height:5px; display:flex; }}
+  .ribbon span {{ flex:1; }}
+  .ribbon .r {{ background:#dc2626; }} .ribbon .o {{ background:#f59e0b; }} .ribbon .g {{ background:#059669; }}
+  header {{ background:rgba(255,255,255,.88); border-bottom:1px solid var(--line);
+            box-shadow:0 1px 2px rgba(15,23,42,.05); }}
+  .head-in {{ max-width:860px; margin:0 auto; padding:18px 24px; display:flex;
+              flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; }}
+  .brand {{ display:flex; align-items:center; gap:14px; }}
+  .mark {{ width:44px; height:44px; border-radius:12px; background:#0f172a;
+           display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 11px;
+           box-shadow:0 4px 10px rgba(15,23,42,.25); }}
+  .mark span {{ height:3px; border-radius:99px; }}
+  .mark .b1 {{ background:#ef4444; }} .mark .b2 {{ background:#f59e0b; }} .mark .b3 {{ background:#10b981; }}
+  h1 {{ font-size:1.3rem; margin:0; letter-spacing:-.01em; }}
+  h1 .thin {{ font-weight:300; color:#94a3b8; }} h1 .teal {{ color:var(--teal-ink); }}
+  .sub {{ margin:2px 0 0; color:var(--soft); font-size:.85rem; }}
+  .pills {{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }}
+  .pill {{ border:1px solid #cbd5e1; background:#fff; border-radius:99px; padding:4px 12px;
+           font-size:.75rem; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--soft); }}
+  .pill b {{ color:var(--ink); font-weight:600; }}
+  a.desk {{ border:1px solid #cbd5e1; background:#fff; border-radius:99px; padding:5px 14px;
+            font-size:.8rem; font-weight:600; color:var(--teal-ink); text-decoration:none; }}
+  a.desk:hover {{ border-color:var(--teal); }}
+  main {{ max-width:860px; margin:0 auto; padding:28px 24px 64px; }}
+  .banner {{ display:flex; gap:10px; align-items:flex-start; border:1px solid rgba(217,119,6,.35);
+             background:#fffbeb; border-radius:12px; padding:12px 16px; margin-bottom:26px;
+             font-size:.85rem; line-height:1.55; color:#78350f; }}
+  .banner svg {{ flex-shrink:0; margin-top:2px; }}
+  h2 {{ font-size:.95rem; margin:30px 0 12px; color:#1e293b; }}
+  .card {{ background:#fff; border:1px solid var(--line); border-radius:14px;
+           box-shadow:0 1px 2px rgba(15,23,42,.06); overflow:hidden; }}
+  table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+  th {{ text-align:left; background:#f8fafc; color:var(--soft); font-size:.68rem;
+        text-transform:uppercase; letter-spacing:.08em; padding:9px 16px;
+        border-bottom:1px solid var(--line); }}
+  td {{ padding:11px 16px; border-bottom:1px solid var(--line); vertical-align:top; }}
+  tr:last-child td {{ border-bottom:0; }}
+  tr:hover td {{ background:#f8fafc; }}
+  code {{ background:var(--chip); padding:2px 7px; border-radius:6px; font-size:.82em; }}
+  a {{ color:var(--teal-ink); font-weight:600; text-decoration:none; }}
+  a:hover {{ text-decoration:underline; }}
+  .muted {{ color:var(--soft); }}
+  .chip-red {{ display:inline-block; background:#dc2626; color:#fff; font-weight:700;
+               font-size:.66rem; letter-spacing:.05em; padding:2px 9px; border-radius:99px; }}
+  .chip-green {{ display:inline-block; background:#059669; color:#fff; font-weight:700;
+                 font-size:.66rem; letter-spacing:.05em; padding:2px 9px; border-radius:99px; }}
+  footer {{ border-top:1px solid var(--line); background:rgba(255,255,255,.7); }}
+  .foot-in {{ max-width:860px; margin:0 auto; padding:18px 24px; font-size:.8rem;
+              color:var(--soft); line-height:1.6; }}
+  .foot-in b {{ color:#334155; }}
 </style>
 </head>
 <body>
+<div class="ribbon"><span class="r"></span><span class="o"></span><span class="g"></span></div>
+<header>
+  <div class="head-in">
+    <div class="brand">
+      <div class="mark"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+      <div>
+        <h1>Mstari <span class="thin">—</span> <span class="teal">the Triage Desk</span> <span class="thin">·</span> core service</h1>
+        <p class="sub">Deterministic SATS/TEWS scoring core of the agentic triage queue, served read-only (v{VERSION})</p>
+      </div>
+    </div>
+    <div class="pills">
+      <a class="desk" href="/">Open the Triage Desk &rarr;</a>
+      <span class="pill">core · <b>v{VERSION}</b></span>
+    </div>
+  </div>
+</header>
 <main>
-  <h1>Mstari <span>&mdash; the Triage Desk</span> &middot; core service</h1>
-  <p class="sub">Deterministic SATS/TEWS scoring core of the agentic triage queue,
-     served read-only (v{VERSION}).</p>
-  <div class="banner">{SCOPE}</div>
+  <div class="banner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+    <span><b>Scope — enforced in code, not in prose.</b> {SCOPE} The irreversible, human-gated tools (confirm_priority, raise_recheck_flag) are never exposed over HTTP.</span>
+  </div>
 
-  <h2>Endpoints</h2>
-  <table>
-    <tr><th>Endpoint</th><th>What it returns</th></tr>
-    <tr><td><a href="/api/health"><code>GET /api/health</code></a></td>
-        <td>Service, lanes, and what is (deliberately) not exposed.</td></tr>
-    <tr><td><a href="/api/discriminators"><code>GET /api/discriminators</code></a></td>
-        <td>The SATS adult-chart discriminator vocabulary with colours.</td></tr>
-    <tr><td><a href="/api/triage?patient=P-001"><code>GET /api/triage?patient=P-001</code></a></td>
-        <td>One synthetic patient run through the real pipeline:
-            intake &rarr; extraction (labelled lane) &rarr; cited TEWS &rarr;
-            <em>draft</em> card. Publishing still requires a named clinician.</td></tr>
-  </table>
+  <h2>Try the pipeline</h2>
+  <div class="card">
+    <table>
+      <tr><th style="width:38%">Endpoint</th><th>What it returns</th></tr>
+      <tr>
+        <td><a href="/api/health"><code>GET /api/health</code></a></td>
+        <td>Service, lanes, and what is (deliberately) not exposed.</td>
+      </tr>
+      <tr>
+        <td><a href="/api/discriminators"><code>GET /api/discriminators</code></a></td>
+        <td>The SATS adult-chart discriminator vocabulary with colours.</td>
+      </tr>
+      <tr>
+        <td><a href="/api/triage?patient=P-001"><code>GET /api/triage?patient=P-001</code></a></td>
+        <td><span class="chip-green">ROUTINE</span> One synthetic patient through the real pipeline: intake &rarr; extraction (labelled lane) &rarr; cited TEWS &rarr; <em>draft</em> card. Publishing still requires a named clinician.</td>
+      </tr>
+      <tr>
+        <td><a href="/api/triage?patient=P-008"><code>GET /api/triage?patient=P-008</code></a></td>
+        <td><span class="chip-red">ESCALATION</span> The same pipeline on a case that overrides to <b>RED (immediate)</b> on a cited discriminator.</td>
+      </tr>
+    </table>
+  </div>
 
   <h2>Where the rest lives</h2>
-  <table>
-    <tr><th>Part</th><th>Runs</th></tr>
-    <tr><td>Interactive Triage Desk (queue board, gate, audit)</td>
-        <td>sibling <code>web</code> service on this deployment</td></tr>
-    <tr><td>Full agentic core: LangGraph orchestration, own MCP server
-            (6 tools, 2 clinician-gated), local open-weights Qwen lane</td>
-        <td>locally, from the repo root: <code>./run_demo.sh</code></td></tr>
-  </table>
-
-  <footer>Synthetic data only &mdash; no PHI exists, is stored, or is transmitted.
-  Agentic AI for Africa Innovation Challenge &middot; healthcare track.</footer>
+  <div class="card">
+    <table>
+      <tr><th style="width:38%">Part</th><th>Runs</th></tr>
+      <tr>
+        <td>Interactive Triage Desk <span class="muted">(queue board, human gate, audit trail)</span></td>
+        <td>sibling <code>web</code> service on this deployment &mdash; <a href="/">open the desk</a></td>
+      </tr>
+      <tr>
+        <td>Full agentic core <span class="muted">(LangGraph orchestration, own MCP server with 6 tools — 2 clinician-gated, local open-weights Qwen lane)</span></td>
+        <td>locally, from the repo root: <code>./run_demo.sh</code></td>
+      </tr>
+    </table>
+  </div>
 </main>
+<footer>
+  <div class="foot-in">
+    Synthetic data only &mdash; no PHI exists, is stored, or is transmitted. Every response labels its extraction lane honestly.<br>
+    <b>github.com/Roy-Wanyoike/mstari-triage</b> · MIT · Agentic AI for Africa Innovation Challenge &mdash; Healthcare: The Triage Desk
+  </div>
+</footer>
 </body>
 </html>
 """
