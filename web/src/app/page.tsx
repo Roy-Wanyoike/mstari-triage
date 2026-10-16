@@ -29,9 +29,11 @@ interface RunState {
 }
 
 /* ========================================================================
-   Mstari command-console visual system.
-   SATS colours are the interface's first language: every surface —
-   header ribbon, queue spines, score locator, board rows — speaks them.
+   Mstari — the Triage Desk · visual system v3.
+   One idea carries the whole interface: the SATS spectrum is a LINE.
+   The brand mark is a vitals pulse crossing that line; the header ribbon,
+   queue spines, locator bars and board chips are all voices of the same
+   scale. Clinical, honest, calm — numbers stay tabular, labels stay true.
    ======================================================================== */
 
 const COLOUR_CLASS: Record<string, string> = {
@@ -73,6 +75,48 @@ const SATS_SPECTRUM = [
   { colour: "GREEN", bar: "bg-emerald-600", label: "< 240 min", labelClass: "text-white/95" },
 ];
 
+/* ---- The Mstari mark ---------------------------------------------------
+   A single vitals pulse stroked with the full SATS spectrum — critical
+   red at the left, stable green at the right. "Mstari" is Swahili for
+   "line": the patient's line, the pulse, and the triage scale in one.
+   ------------------------------------------------------------------------ */
+function MstariPulse({ className = "", idSuffix }: { className?: string; idSuffix: string }) {
+  const gid = `mstari-sats-${idSuffix}`;
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden focusable="false">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ef4444" />
+          <stop offset="0.38" stopColor="#f97316" />
+          <stop offset="0.66" stopColor="#facc15" />
+          <stop offset="1" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M7 36H18L23 36L28 22L34.5 48L39 29L42 36H57"
+        fill="none"
+        stroke={`url(#${gid})`}
+        strokeWidth="4.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/* Header brand tile: the pulse on a deep instrument tile. */
+function BrandMark() {
+  return (
+    <div
+      aria-hidden
+      className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-slate-700/60 to-slate-950 shadow-lg shadow-black/40 ring-1 ring-white/25"
+    >
+      <MstariPulse className="h-8 w-8" idSuffix="brand" />
+      <span className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-transparent via-transparent to-white/10" />
+    </div>
+  );
+}
+
 function ColourChip({ colour, big = false }: { colour: string; big?: boolean }) {
   return (
     <span
@@ -82,20 +126,6 @@ function ColourChip({ colour, big = false }: { colour: string; big?: boolean }) 
     >
       {colour}
     </span>
-  );
-}
-
-function BrandMark() {
-  return (
-    <div
-      aria-hidden
-      className="flex h-11 w-11 flex-col justify-center gap-[4px] rounded-xl bg-white px-2.5 py-3 shadow-md ring-1 ring-white/25"
-    >
-      <span className="h-[3px] w-full rounded-full bg-red-500" />
-      <span className="h-[3px] w-3/4 rounded-full bg-orange-400" />
-      <span className="h-[3px] w-1/2 rounded-full bg-amber-300" />
-      <span className="h-[3px] w-1/3 rounded-full bg-emerald-400" />
-    </div>
   );
 }
 
@@ -143,23 +173,23 @@ function SatsLocator({ colour, dark = false }: { colour: string; dark?: boolean 
 
 function StatCell({ icon: Icon, label, value, tone }: { icon: typeof Activity; label: string; value: number | string; tone: string }) {
   return (
-    <div className="flex items-center gap-3 bg-white px-4 py-3.5">
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${tone}`}>
-        <Icon className="h-4.5 w-4.5" />
-      </span>
+    <div className="flex items-center justify-between gap-3 bg-white px-4 py-4">
       <div className="min-w-0">
-        <p className="truncate text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
-        <p className="text-2xl font-bold leading-tight tabular-nums text-slate-900">{value}</p>
+        <p className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
+        <p className="mt-1 text-[1.7rem] font-bold leading-none tabular-nums tracking-tight text-slate-900">{value}</p>
       </div>
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone}`}>
+        <Icon className="h-4 w-4" />
+      </span>
     </div>
   );
 }
 
 function VitalTile({ label, value, unit, note }: { label: string; value: string; unit?: string; note?: string }) {
   return (
-    <div className="rounded-lg border bg-slate-50/60 px-3 py-2">
+    <div className="rounded-lg border bg-white px-3 py-2 shadow-[inset_0_1px_0_oklch(1_0_0)]">
       <p className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
-      <p className="mt-0.5 font-mono text-lg font-semibold leading-tight text-slate-900">
+      <p className="mt-0.5 font-mono text-lg font-semibold leading-tight tabular-nums text-slate-900">
         {value}
         {unit && <span className="ml-0.5 text-[11px] font-normal text-muted-foreground">{unit}</span>}
       </p>
@@ -172,7 +202,7 @@ function VitalTile({ label, value, unit, note }: { label: string; value: string;
 function RailNode({ n, state }: { n: number; state: "done" | "busy" | "pending" }) {
   const styles =
     state === "done"
-      ? "border-teal-800 bg-teal-800 text-white shadow-sm shadow-teal-900/30"
+      ? "border-teal-900 bg-teal-900 text-white shadow-sm shadow-teal-900/30"
       : state === "busy"
         ? "border-2 border-teal-600 bg-white text-teal-700 animate-pulse"
         : "border-2 border-slate-300 bg-white text-slate-400";
@@ -206,7 +236,7 @@ function RailStep({
       {!last && (
         <span
           aria-hidden
-          className="absolute bottom-1 left-[13.5px] top-9 w-px bg-gradient-to-b from-slate-300 via-slate-200 to-slate-100"
+          className="absolute bottom-1 left-[13.5px] top-9 w-px bg-gradient-to-b from-teal-900/30 via-slate-300 to-slate-100"
         />
       )}
       <RailNode n={n} state={state} />
@@ -386,6 +416,20 @@ export default function Home() {
   const runsStarted = Object.values(runs).filter((r) => r.draft || r.escalated || r.busy).length;
   const blocksCount = ledger.filter((e) => e.decision === "BLOCKED").length;
 
+  /* ---- v3 additive: desk wall-clock (hydration-safe — renders after mount) ---- */
+  const [clock, setClock] = useState<string | null>(null);
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Africa/Nairobi",
+    });
+    const tick = () => setClock(fmt.format(new Date()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const neonLive = storageLabel === "Neon Postgres";
+
   return (
     <div className="dot-grid flex min-h-screen flex-col">
       {/* ---------- Command bar ---------- */}
@@ -395,21 +439,43 @@ export default function Home() {
             <div className="flex items-center gap-3.5">
               <BrandMark />
               <div>
-                <h1 className="text-lg font-bold tracking-tight sm:text-[1.3rem]">
-                  Mstari <span className="font-light text-white/40">—</span>{" "}
-                  <span className="text-teal-300">the Triage Desk</span>
+                <h1 className="flex flex-wrap items-baseline gap-x-2.5 text-lg font-bold tracking-tight sm:text-[1.35rem]">
+                  Mstari
+                  <span aria-hidden className="hidden h-4 w-px bg-white/20 sm:inline-block" />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-teal-300 sm:text-xs">
+                    Triage&nbsp;Desk
+                  </span>
                 </h1>
-                <p className="text-[11px] text-white/55 sm:text-xs">
+                <p className="mt-0.5 text-[11px] text-white/55 sm:text-xs">
                   Agentic triage queue for a busy public OPD · hosted demo mirror · synthetic data only
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[11px] backdrop-blur">
-                <Database className="h-3 w-3 text-teal-300" />
-                <span className="text-white/50">storage:</span> <span className="text-teal-100">{storageLabel}</span>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[11px] tabular-nums backdrop-blur"
+                title="Desk clock — East Africa Time"
+              >
+                <Clock3 className="h-3 w-3 text-teal-300" />
+                {clock ?? <span className="text-white/40">--:--:--</span>}
+                <span className="text-white/45">EAT</span>
               </span>
-              <span className="hidden rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-white/60 backdrop-blur md:inline-flex">
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[11px] backdrop-blur"
+                title={neonLive ? "Confirmed priorities, gate ledger and audit trail persist to Neon Postgres" : "State lives in this server session's memory"}
+              >
+                {neonLive ? (
+                  <span className="relative flex h-2 w-2" aria-hidden>
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                ) : (
+                  <span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden />
+                )}
+                <span className="text-white/50">storage:</span>
+                <span className={neonLive ? "text-emerald-200" : "text-white/70"}>{storageLabel}</span>
+              </span>
+              <span className="hidden rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-white/60 backdrop-blur lg:inline-flex">
                 Agentic AI for Africa Challenge · healthcare track
               </span>
             </div>
@@ -430,7 +496,7 @@ export default function Home() {
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         {/* ---------- Meter strip ---------- */}
-        <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border shadow-sm sm:grid-cols-3 lg:grid-cols-5">
+        <div className="rise mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border bg-border shadow-sm shadow-slate-950/5 sm:grid-cols-3 lg:grid-cols-5">
           <StatCell icon={ListOrdered} label="synthetic patients" value={BUNDLED_PATIENTS.length} tone="bg-teal-50 text-teal-700" />
           <StatCell icon={Activity} label="runs started" value={runsStarted} tone="bg-sky-50 text-sky-700" />
           <StatCell icon={CheckCircle2} label="confirmed on board" value={board.length} tone="bg-emerald-50 text-emerald-700" />
@@ -444,7 +510,7 @@ export default function Home() {
             <CardHeader className="border-b bg-slate-50/80 py-3.5">
               <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-[15px]">
                 <span className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-800 text-white shadow-sm">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-900 text-white shadow-sm">
                     <Stethoscope className="h-3.5 w-3.5" />
                   </span>
                   Arrival queue
@@ -467,9 +533,9 @@ export default function Home() {
                       <button
                         key={card.patient_ref}
                         onClick={() => { setSelected(card.patient_ref); if (!run && !queueBusy) runPipeline(card.patient_ref, card); }}
-                        className={`w-full rounded-xl border border-l-4 bg-white p-3 text-left transition-all hover:-translate-y-px hover:shadow-md ${
+                        className={`relative w-full overflow-hidden rounded-xl border border-l-4 bg-white p-3 text-left transition-all hover:-translate-y-px hover:shadow-md ${
                           colour ? `${SPINE[colour]} ` : "border-l-slate-300 "
-                        }${isSel ? "border-teal-700/50 shadow-md ring-2 ring-teal-700/15" : "shadow-sm"}`}
+                        }${isSel ? "border-teal-800/50 shadow-md ring-2 ring-teal-800/20" : "shadow-sm"}`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-sm font-bold tracking-tight text-slate-900">{card.patient_ref}</span>
@@ -491,6 +557,7 @@ export default function Home() {
                           <span aria-hidden>·</span>
                           <Clock3 className="h-3 w-3" /> waiting {card.wait_minutes_at_triage ?? 0} min
                         </p>
+                        {run?.busy && <span aria-hidden className="busy-shimmer" />}
                       </button>
                     );
                   })}
@@ -502,9 +569,9 @@ export default function Home() {
           {/* RIGHT: pipeline workspace */}
           <div className="min-w-0 space-y-6">
             {!selectedBundle && (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-6 py-14 text-center shadow-sm">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 ring-1 ring-teal-700/15">
-                  <Stethoscope className="h-7 w-7 text-teal-700/70" />
+              <div className="rise rounded-2xl border border-dashed border-slate-300 bg-white/70 px-6 py-14 text-center shadow-sm">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 ring-1 ring-teal-800/15">
+                  <Stethoscope className="h-7 w-7 text-teal-800/70" />
                 </div>
                 <p className="mt-4 text-base font-semibold text-slate-800">Select a patient to open their pipeline</p>
                 <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
@@ -524,7 +591,7 @@ export default function Home() {
             )}
 
             {selectedBundle && (
-              <Card className="shadow-sm ring-1 ring-slate-950/5">
+              <Card className="rise shadow-sm ring-1 ring-slate-950/5">
                 <CardHeader className="border-b bg-slate-50/80 py-3.5">
                   <CardTitle className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px]">
                     <span>Pipeline</span>
@@ -547,7 +614,7 @@ export default function Home() {
                         <Badge variant="outline" className="bg-white text-xs">mobility {selectedBundle.card.mobility}</Badge>
                         <Badge variant="outline" className="bg-white text-xs">wait {String(selectedBundle.card.wait_minutes_at_triage ?? 0)} min</Badge>
                       </div>
-                      <blockquote className="mt-3 border-l-2 border-teal-700/60 pl-3 text-sm italic leading-relaxed text-slate-700">
+                      <blockquote className="mt-3 border-l-2 border-teal-800/60 pl-3 text-sm italic leading-relaxed text-slate-700">
                         &ldquo;{selectedBundle.card.complaint_text}&rdquo;
                         <span className="ml-2 align-middle font-mono text-[10px] not-italic text-muted-foreground">complaint_text</span>
                       </blockquote>
@@ -622,7 +689,7 @@ export default function Home() {
                     {selectedRun?.draft ? (
                       <div className="overflow-hidden rounded-xl border shadow-sm">
                         {/* dark score banner */}
-                        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 bg-slate-950 px-4 py-3.5 text-white">
+                        <div className="command-bar flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3.5 text-white">
                           <ColourChip colour={selectedRun.draft.colour} big />
                           <div>
                             <p className="font-mono text-3xl font-bold leading-none tabular-nums">{selectedRun.draft.tews}</p>
@@ -764,7 +831,7 @@ export default function Home() {
                       {selectedBundle.recheck && selectedRun?.confirmed && (
                         <div className="mt-3.5 rounded-lg border border-dashed border-slate-300 bg-white/80 p-3.5">
                           <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
-                            <GitCompareArrows className="h-4 w-4 text-teal-700" />
+                            <GitCompareArrows className="h-4 w-4 text-teal-800" />
                             Deterioration watch — re-check vitals available for this patient
                           </p>
                           <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
@@ -827,7 +894,11 @@ export default function Home() {
                             className={`border-b border-l-4 bg-white transition-colors last:border-0 hover:bg-slate-50/60 ${SPINE[c.colour] ?? "border-l-slate-300"}`}
                           >
                             <td className="py-2.5 pl-4 pr-3">
-                              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 font-mono text-[11px] font-bold text-slate-700">
+                              <span
+                                className={`inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-[11px] font-bold ${
+                                  i === 0 ? "bg-teal-900 text-white shadow-sm" : "bg-slate-100 text-slate-700"
+                                }`}
+                              >
                                 {i + 1}
                               </span>
                             </td>
@@ -940,7 +1011,10 @@ export default function Home() {
       <footer className="border-t bg-white/70">
         <div className="mx-auto max-w-7xl px-4 py-6 text-xs leading-relaxed text-muted-foreground sm:px-6">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="SATS colour legend">
-            <span className="font-semibold uppercase tracking-[0.12em] text-slate-500">SATS bands</span>
+            <span className="flex items-center gap-2 font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <MstariPulse className="h-4 w-4" idSuffix="footer" />
+              Mstari · SATS bands
+            </span>
             {SATS_SPECTRUM.map((s) => (
               <span key={s.colour} className="inline-flex items-center gap-1.5">
                 <span className={`h-2 w-2 rounded-full ${s.bar}`} aria-hidden />

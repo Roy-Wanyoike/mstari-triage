@@ -104,17 +104,15 @@ _PAGE = """<!doctype html>
   }}
   .ribbon {{ height:5px; display:flex; }}
   .ribbon span {{ flex:1; }}
-  .ribbon .r {{ background:#dc2626; }} .ribbon .o {{ background:#f59e0b; }} .ribbon .g {{ background:#059669; }}
+  .ribbon .r {{ background:#dc2626; }} .ribbon .o {{ background:#f97316; }} .ribbon .y {{ background:#eab308; }} .ribbon .g {{ background:#059669; }}
   header {{ background:rgba(255,255,255,.88); border-bottom:1px solid var(--line);
             box-shadow:0 1px 2px rgba(15,23,42,.05); }}
   .head-in {{ max-width:860px; margin:0 auto; padding:18px 24px; display:flex;
               flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; }}
   .brand {{ display:flex; align-items:center; gap:14px; }}
-  .mark {{ width:44px; height:44px; border-radius:12px; background:#0f172a;
-           display:flex; flex-direction:column; justify-content:center; gap:5px; padding:0 11px;
-           box-shadow:0 4px 10px rgba(15,23,42,.25); }}
-  .mark span {{ height:3px; border-radius:99px; }}
-  .mark .b1 {{ background:#ef4444; }} .mark .b2 {{ background:#f59e0b; }} .mark .b3 {{ background:#10b981; }}
+  .mark {{ width:44px; height:44px; border-radius:12px; background:#0d1a26;
+           display:flex; align-items:center; justify-content:center;
+           box-shadow:0 4px 10px rgba(15,23,42,.25); border:1px solid rgba(255,255,255,.14); }}
   h1 {{ font-size:1.3rem; margin:0; letter-spacing:-.01em; }}
   h1 .thin {{ font-weight:300; color:#94a3b8; }} h1 .teal {{ color:var(--teal-ink); }}
   .sub {{ margin:2px 0 0; color:var(--soft); font-size:.85rem; }}
@@ -155,11 +153,19 @@ _PAGE = """<!doctype html>
 </style>
 </head>
 <body>
-<div class="ribbon"><span class="r"></span><span class="o"></span><span class="g"></span></div>
+<div class="ribbon"><span class="r"></span><span class="o"></span><span class="y"></span><span class="g"></span></div>
 <header>
   <div class="head-in">
     <div class="brand">
-      <div class="mark"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+      <div class="mark">
+        <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+          <defs><linearGradient id="satsline" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ef4444"/><stop offset="0.38" stop-color="#f97316"/>
+            <stop offset="0.66" stop-color="#facc15"/><stop offset="1" stop-color="#10b981"/>
+          </linearGradient></defs>
+          <path d="M7 36H18L23 36L28 22L34.5 48L39 29L42 36H57" fill="none" stroke="url(#satsline)" stroke-width="4.75" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <div>
         <h1>Mstari <span class="thin">—</span> <span class="teal">the Triage Desk</span> <span class="thin">·</span> core service</h1>
         <p class="sub">Deterministic SATS/TEWS scoring core of the agentic triage queue, served read-only (v{VERSION})</p>

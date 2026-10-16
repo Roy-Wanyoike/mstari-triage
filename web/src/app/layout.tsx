@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,7 +12,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#0d1a26",
+};
+
 export const metadata: Metadata = {
+  applicationName: "Mstari",
   title: "Mstari — the Triage Desk",
   description:
     "Agentic triage queue for a busy public OPD: cited SATS/TEWS priority scoring, human clinician gate, full audit trail. Agentic AI for Africa Challenge — healthcare track.",
