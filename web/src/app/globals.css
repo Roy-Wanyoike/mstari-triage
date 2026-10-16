@@ -45,24 +45,24 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.984 0.004 210);
-  --foreground: oklch(0.2 0.02 240);
+  --background: oklch(0.972 0.006 210);
+  --foreground: oklch(0.21 0.03 245);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 240);
+  --card-foreground: oklch(0.21 0.03 245);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 240);
-  --primary: oklch(0.51 0.086 195);
+  --popover-foreground: oklch(0.21 0.03 245);
+  --primary: oklch(0.46 0.082 195);
   --primary-foreground: oklch(0.985 0.002 200);
-  --secondary: oklch(0.965 0.006 200);
-  --secondary-foreground: oklch(0.3 0.03 230);
-  --muted: oklch(0.965 0.006 200);
-  --muted-foreground: oklch(0.5 0.02 230);
-  --accent: oklch(0.955 0.015 195);
-  --accent-foreground: oklch(0.35 0.05 210);
+  --secondary: oklch(0.955 0.008 205);
+  --secondary-foreground: oklch(0.32 0.035 235);
+  --muted: oklch(0.955 0.008 205);
+  --muted-foreground: oklch(0.5 0.025 230);
+  --accent: oklch(0.945 0.02 195);
+  --accent-foreground: oklch(0.35 0.055 210);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.915 0.008 210);
-  --input: oklch(0.915 0.008 210);
-  --ring: oklch(0.62 0.09 195);
+  --border: oklch(0.9 0.01 215);
+  --input: oklch(0.9 0.01 215);
+  --ring: oklch(0.55 0.09 195);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -119,4 +119,56 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background: oklch(0.85 0.06 195);
+    color: oklch(0.25 0.05 220);
+  }
+}
+
+/* ---- Mstari command console chrome ---- */
+
+/* Instrument-panel canvas: cool paper with a fine dot grid. */
+.dot-grid {
+  background-image: radial-gradient(oklch(0.55 0.03 215 / 13%) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Dark command bar: deep sea-slate with a faint teal instrument glow. */
+.command-bar {
+  background:
+    radial-gradient(900px 300px at 12% -40%, oklch(0.42 0.07 195 / 55%), transparent 70%),
+    radial-gradient(700px 260px at 88% -50%, oklch(0.35 0.05 250 / 45%), transparent 70%),
+    oklch(0.19 0.028 245);
+}
+
+/* Slim, quiet scrollbars for panels and terminals. */
+.quiet-scroll::-webkit-scrollbar,
+[data-radix-scroll-area-viewport]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.quiet-scroll::-webkit-scrollbar-track,
+[data-radix-scroll-area-viewport]::-webkit-scrollbar-track {
+  background: transparent;
+}
+.quiet-scroll::-webkit-scrollbar-thumb,
+[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0.02 220 / 55%);
+  border-radius: 8px;
+}
+.quiet-scroll::-webkit-scrollbar-thumb:hover,
+[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0.03 220 / 75%);
+}
+.dark-terminal::-webkit-scrollbar-thumb {
+  background: oklch(0.55 0.03 230 / 70%);
+}
+.dark-terminal::-webkit-scrollbar-track {
+  background: oklch(0.22 0.03 250 / 60%);
+}
+
+/* Audit rows: keep long JSONL lines inspectable. */
+.jsonl-row {
+  text-wrap: wrap;
+  overflow-wrap: anywhere;
 }
