@@ -113,11 +113,14 @@ The hosted desk persists its demo queue, gate ledger and audit trail to a
 in-memory session storage when unset — the header pill always says which
 backend is live.
 
-> **Deploying to Vercel?** In the Vercel project settings set **Root Directory
-> = `web`** (steps in [`web/README.md`](web/README.md)). Do **not** add a root
-> `vercel.json`: the Python package at the repo root is the agentic CLI/MCP
-> core, not a web service — a root-level `python` runtime has no web entrypoint
-> to serve, which fails the build with `must specify an "entrypoint"`.
+> **Deploying to Vercel?** The repo ships a root `vercel.json` that defines the
+> **two services** deployed together: `core` — the deterministic Python scoring
+> core as a read-only API (`api/index.py`: status page, `/api/health`,
+> `/api/discriminators`, `/api/triage?patient=P-001`; gated tools are never
+> exposed over HTTP) — and `web` — the Next.js Triage Desk. Deploy with the
+> project Framework Preset = **services** (no other overrides needed), or the
+> desk alone with Root Directory = `web`. Don't hand-edit the services file
+> casually: an invalid one blocks every build (see git history).
 
 **One command** (creates a virtualenv, installs dependencies, generates the
 bundled synthetic intake cards, runs the evaluation suite, then runs the full

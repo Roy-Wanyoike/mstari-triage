@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "core": {
+      "root": ".",
+      "runtime": "python",
+      "entrypoint": "api/index.py"
+    },
+    "web": {
+      "root": "web",
+      "framework": "nextjs"
+    }
+  }
+}
