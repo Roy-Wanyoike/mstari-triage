@@ -12,6 +12,7 @@
     }
   },
   "rewrites": [
+    { "source": "/", "destination": { "service": "web" } },
     { "source": "/core", "destination": { "service": "core" } },
     { "source": "/core/:path*", "destination": { "service": "core" } },
     { "source": "/:path*", "destination": { "service": "web" } }
